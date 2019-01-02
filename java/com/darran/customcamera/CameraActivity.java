@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.darran.customcamera.Constants.SCAN_IMAGE_LOCATION;
+
 public class CameraActivity extends AppCompatActivity {
 
     private static final String TAG = "CustomCameraAPI";
@@ -185,7 +187,18 @@ public class CameraActivity extends AppCompatActivity {
             // Orientation
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
+
+
+
+
+//            File mFile=new File(SCAN_IMAGE_LOCATION);
+            String outPic = Constants.SCAN_IMAGE_LOCATION + File.separator + Utilities.generateFilename();
+            FolderUtil.createDefaultFolder(Constants.SCAN_IMAGE_LOCATION);
+
+           // mFile.mkdir();
+
+            final File file = new File(outPic);
+           // final File file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
@@ -194,7 +207,6 @@ public class CameraActivity extends AppCompatActivity {
                         image = reader.acquireLatestImage();
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
-
                         buffer.get(bytes);
                         save(bytes);
                     }catch(FileNotFoundException e){
@@ -210,6 +222,7 @@ public class CameraActivity extends AppCompatActivity {
 
                 private void save(byte[] bytes) throws IOException {
                     OutputStream output = null;
+
                     try{
                         output = new FileOutputStream(file);
                         output.write(bytes);
